@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
+import dayjs from "dayjs";
 
 // JSONデータの形式に対応する型を定義
 type TaskData = {
@@ -58,15 +59,29 @@ const Timeline = () => {
     },
     xaxis: {
       type: "datetime",
+      labels: {
+        style: {
+          fontSize: "20px",
+        },
+        datetimeUTC: false,
+        formatter: (value) => {
+          return dayjs(value).format("YYYY/MM/DD HH:mm");
+        },
+      },
     },
     yaxis: {
       reversed: true,
+      labels: {
+        style: {
+          fontSize: "20px",
+        },
+      },
     },
   };
 
   return (
     <div className="App">
-      <Chart options={options} series={series} type="rangeBar" height="350" />
+      <Chart options={options} series={series} type="rangeBar" height="700" />
     </div>
   );
 };
