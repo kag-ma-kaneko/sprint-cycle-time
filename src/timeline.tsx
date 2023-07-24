@@ -1,47 +1,17 @@
+import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 
 const Timeline = () => {
-  const series = [
-    {
-      name: "Task 1",
-      data: [
-        {
-          x: "Subtask 1",
-          y: [
-            new Date("2023-01-01").getTime(),
-            new Date("2023-01-02").getTime(),
-          ],
-        },
-        {
-          x: "Subtask 2",
-          y: [
-            new Date("2023-01-02").getTime(),
-            new Date("2023-01-03").getTime(),
-          ],
-        },
-      ],
-    },
-    {
-      name: "Task 2",
-      data: [
-        {
-          x: "Subtask 1",
-          y: [
-            new Date("2023-01-04").getTime(),
-            new Date("2023-01-05").getTime(),
-          ],
-        },
-        {
-          x: "Subtask 2",
-          y: [
-            new Date("2023-01-05").getTime(),
-            new Date("2023-01-06").getTime(),
-          ],
-        },
-      ],
-    },
-  ];
+  const [series, setSeries] = useState([]);
 
+  useEffect(() => {
+    fetch("data.json")
+      .then((response) => response.json())
+      .then((data) => setSeries(data));
+  }, []);
+
+  // グラフ表示形式の設定
+  // 横向きで、横軸を時刻にしてTimelineを表示しています
   const options = {
     chart: {
       type: "rangeBar" as const,
