@@ -24,6 +24,7 @@ type SeriesData = {
 
 const Timeline = () => {
   const [series, setSeries] = useState<SeriesData>([]);
+  const sprinttBeginDate = new Date("2023-07-19").getTime();
 
   // JSONデータを読み込んで、グラフに表示するデータを作成
   // ApexChartsが欲しがるデータはサブタスクごとに分けられているので、
@@ -54,10 +55,15 @@ const Timeline = () => {
   const options: ApexOptions = {
     chart: {
       type: "rangeBar",
+      width: "100%",
     },
     plotOptions: {
       bar: {
         horizontal: true,
+        distributed: true,
+        dataLabels: {
+          hideOverflowingLabels: false,
+        },
       },
     },
     xaxis: {
@@ -68,16 +74,22 @@ const Timeline = () => {
         },
         datetimeUTC: false,
         formatter: (value) => {
-          return dayjs(value).format("YYYY/MM/DD HH:mm");
+          return dayjs(value).format("MM/DD");
         },
       },
+      min: sprinttBeginDate,
+      max: sprinttBeginDate + 1000 * 60 * 60 * 24 * 14,
     },
     yaxis: {
-      reversed: true,
       labels: {
         style: {
           fontSize: "20px",
         },
+      },
+    },
+    grid: {
+      xaxis: {
+        lines: { show: true },
       },
     },
   };
