@@ -8,8 +8,8 @@ type TaskData = {
   name: string;
   subtasks: {
     name: string;
-    start: number;
-    end: number;
+    start: string;
+    end: string;
   }[];
 }[];
 
@@ -37,7 +37,10 @@ const Timeline = () => {
             data: [
               {
                 x: task.name,
-                y: [subtask.start, subtask.end] as [number, number],
+                y: [
+                  new Date(subtask.start).getTime(),
+                  new Date(subtask.end).getTime(),
+                ] as [number, number],
               },
             ],
           }))
