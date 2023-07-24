@@ -2,23 +2,66 @@ import Chart from "react-apexcharts";
 
 const Timeline = () => {
   const series = [
-    //data on the y-axis
     {
-      name: "Temperature in Celsius",
-      data: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+      name: "Task 1",
+      data: [
+        {
+          x: "Subtask 1",
+          y: [
+            new Date("2023-01-01").getTime(),
+            new Date("2023-01-02").getTime(),
+          ],
+        },
+        {
+          x: "Subtask 2",
+          y: [
+            new Date("2023-01-02").getTime(),
+            new Date("2023-01-03").getTime(),
+          ],
+        },
+      ],
+    },
+    {
+      name: "Task 2",
+      data: [
+        {
+          x: "Subtask 1",
+          y: [
+            new Date("2023-01-04").getTime(),
+            new Date("2023-01-05").getTime(),
+          ],
+        },
+        {
+          x: "Subtask 2",
+          y: [
+            new Date("2023-01-05").getTime(),
+            new Date("2023-01-06").getTime(),
+          ],
+        },
+      ],
     },
   ];
+
   const options = {
-    //data on the x-axis
-    chart: { id: "bar-chart" },
+    chart: {
+      type: "rangeBar" as const,
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true,
+      },
+    },
     xaxis: {
-      categories: [],
+      type: "datetime" as const,
+    },
+    yaxis: {
+      reversed: true,
     },
   };
 
   return (
-    <div>
-      <Chart options={options} series={series} type="bar" width="450" />
+    <div className="App">
+      <Chart options={options} series={series} type="rangeBar" height="350" />
     </div>
   );
 };
