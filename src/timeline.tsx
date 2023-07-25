@@ -64,6 +64,7 @@ const Timeline = () => {
         dataLabels: {
           hideOverflowingLabels: false,
         },
+        barHeight: "80%",
       },
     },
     xaxis: {
@@ -74,7 +75,7 @@ const Timeline = () => {
         },
         datetimeUTC: false,
         formatter: (value) => {
-          return dayjs(value).format("MM/DD");
+          return dayjs(value).format("MM/DD HH:mm");
         },
       },
       min: sprinttBeginDate,
@@ -88,10 +89,9 @@ const Timeline = () => {
       },
     },
     grid: {
-      xaxis: {
-        lines: { show: true },
-      },
+      borderColor: "#000",
     },
+    legend: { show: false },
   };
 
   return (
