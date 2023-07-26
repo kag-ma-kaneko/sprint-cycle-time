@@ -55,24 +55,16 @@ const Timeline = () => {
   const options: ApexOptions = {
     chart: {
       type: "rangeBar",
-      width: "100%",
     },
     plotOptions: {
       bar: {
         horizontal: true,
-        distributed: true,
-        dataLabels: {
-          hideOverflowingLabels: false,
-        },
-        barHeight: "80%",
+        dataLabels: { hideOverflowingLabels: false, position: "top" },
       },
     },
     xaxis: {
       type: "datetime",
       labels: {
-        style: {
-          fontSize: "20px",
-        },
         datetimeUTC: false,
         formatter: (value) => {
           return dayjs(value).format("MM/DD HH:mm");
@@ -92,6 +84,14 @@ const Timeline = () => {
       borderColor: "#000",
     },
     legend: { show: false },
+    dataLabels: {
+      enabled: true,
+      formatter: (_val, options) => {
+        console.log(options);
+        return options.w.globals.seriesNames[options.seriesIndex];
+      },
+      style: { colors: ["#000"] },
+    },
   };
 
   return (
