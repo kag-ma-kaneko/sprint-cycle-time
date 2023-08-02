@@ -35,8 +35,8 @@ type SeriesData = {
 }[];
 
 const Timeline = () => {
-  const [series, setSeries] = useState<SeriesData>([]);
   const [sprint, setSprint] = useState<SprintMetaData>({} as SprintMetaData);
+  const [backlogs, setBacklogs] = useState<BacklogData[]>([]);
 
   // JSONデータを読み込んで、グラフに表示するデータを作成
   // ApexChartsが欲しがるデータはサブタスクごとに分けられている
@@ -44,23 +44,8 @@ const Timeline = () => {
     fetch("data.json")
       .then((response) => response.json() as Promise<SprintData>)
       .then((data) => {
-        // サブタスクごとに分けられているデータを、ApexChartsが欲しがる形式に変換
-        const series = data.backlogs.flatMap((task) =>
-          task.subtasks.map((subtask) => ({
-            name: subtask.name,
-            data: [
-              {
-                x: task.name,
-                y: [
-                  new Date(subtask.start).getTime(),
-                  new Date(subtask.end).getTime(),
-                ] as [number, number],
-              },
-            ],
-          }))
-        );
-        setSeries(series);
         setSprint(data.metaData);
+        setBacklogs(data.backlogs);
       });
   }, []);
 
@@ -101,7 +86,6 @@ const Timeline = () => {
     dataLabels: {
       enabled: true,
       formatter: (_val, options) => {
-        console.log(options);
         return options.w.globals.seriesNames[options.seriesIndex];
       },
       style: { colors: ["#000"] },
@@ -110,7 +94,32 @@ const Timeline = () => {
 
   return (
     <div className="App">
-      <Chart options={options} series={series} type="rangeBar" height="700" />
+      {backlogs.map((backlog, index) => {
+        const series = backlog.subtasks.map((subtask) => ({
+          name: subtask.name,
+          data: [
+            {
+              x: backlog.name,
+              y: [
+                new Date(subtask.start).getTime(),
+                new Date(subtask.end).getTime(),
+              ] as [number, number],
+            },
+          ],
+        }));
+
+        return (
+          <div key={index}>
+            <h2>{backlog.name}</h2>
+            <Chart
+              options={options}
+              series={series}
+              type="rangeBar"
+              height="700"
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };
