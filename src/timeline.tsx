@@ -4,14 +4,26 @@ import { ApexOptions } from "apexcharts";
 import dayjs from "dayjs";
 
 // JSONデータの形式に対応する型を定義
-type TaskData = {
+type SprintData = {
+  metaData: SprintMetaData;
+  backlogs: BacklogData[];
+};
+
+type SprintMetaData = {
+  sprintNo: number;
+  beginDete: string;
+  endDate: string;
+};
+
+type BacklogData = {
   name: string;
   subtasks: {
     name: string;
+    pic: string[];
     start: string;
     end: string;
   }[];
-}[];
+};
 
 // ApexChartsのseriesの型定義
 type SeriesData = {
@@ -24,15 +36,16 @@ type SeriesData = {
 
 const Timeline = () => {
   const [series, setSeries] = useState<SeriesData>([]);
-  const sprinttBeginDate = new Date("2023-07-19").getTime();
+  const [sprint, setSprint] = useState<SprintMetaData>({} as SprintMetaData);
 
   // JSONデータを読み込んで、グラフに表示するデータを作成
-  // ApexChartsが欲しがるデータはサブタスクごとに分けられているので、
+  // ApexChartsが欲しがるデータはサブタスクごとに分けられている
   useEffect(() => {
     fetch("data.json")
-      .then((response) => response.json() as Promise<TaskData>)
+      .then((response) => response.json() as Promise<SprintData>)
       .then((data) => {
-        const series = data.flatMap((task) =>
+        // サブタスクごとに分けられているデータを、ApexChartsが欲しがる形式に変換
+        const series = data.backlogs.flatMap((task) =>
           task.subtasks.map((subtask) => ({
             name: subtask.name,
             data: [
@@ -47,6 +60,7 @@ const Timeline = () => {
           }))
         );
         setSeries(series);
+        setSprint(data.metaData);
       });
   }, []);
 
@@ -70,8 +84,8 @@ const Timeline = () => {
           return dayjs(value).format("MM/DD HH:mm");
         },
       },
-      min: sprinttBeginDate,
-      max: sprinttBeginDate + 1000 * 60 * 60 * 24 * 14,
+      min: new Date(sprint.beginDete).getTime(),
+      max: new Date(sprint.endDate).getTime(),
     },
     yaxis: {
       labels: {
