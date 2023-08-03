@@ -17,7 +17,7 @@ type BacklogData = {
   name: string;
   subtasks: {
     name: string;
-    pic: string[];
+    pic: string;
     start: string;
     end: string;
   }[];
@@ -28,11 +28,13 @@ type ChartData = (string | Date)[][];
 
 const Timeline = () => {
   const [data, setData] = useState<ChartData>([]);
+  const [sprint, setSprint] = useState<SprintMetaData>();
 
   useEffect(() => {
     fetch("data.json")
       .then((response) => response.json() as Promise<SprintData>)
       .then((data) => {
+        setSprint(data.metaData);
         const chartData: ChartData = data.backlogs.flatMap((backlog) =>
           backlog.subtasks.map((subtask) => [
             backlog.name,
@@ -49,12 +51,20 @@ const Timeline = () => {
     <div className="App">
       <Chart
         width={"100%"}
-        height={"400px"}
+        height={"100vh"}
         chartType="Timeline"
         loader={<div>Loading Chart</div>}
         data={[["Backlog Name", "Subtask Name", "Start", "End"], ...data]}
         options={{
           showRowNumber: true,
+          hAxis: {
+            format: "MM/dd HH:mm",
+            minValue: new Date(sprint?.beginDete ?? ""),
+            maxValue: new Date(sprint?.endDate ?? ""),
+          },
+          timeline: {
+            groupByRowLabel: true,
+          },
         }}
         rootProps={{ "data-testid": "1" }}
       />
