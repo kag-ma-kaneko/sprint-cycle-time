@@ -1,7 +1,6 @@
 #root {
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
 .logo {
@@ -15,6 +14,10 @@
 }
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+.file-input {
+  padding: 10px;
 }
 
 @keyframes logo-spin {
