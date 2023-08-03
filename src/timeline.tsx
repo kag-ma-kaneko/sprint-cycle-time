@@ -1,5 +1,5 @@
 import { Chart } from "react-google-charts";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 // JSONデータの形式に対応する型を定義
 type SprintData = {
@@ -27,8 +27,8 @@ type BacklogData = {
 type ChartData = (string | Date)[][];
 
 const Timeline = () => {
-  const [data, setData] = useState<ChartData>([]);
-  const [sprint, setSprint] = useState<SprintMetaData>();
+  const [sprint, setSprint] = useState<SprintData>();
+  const [filter, setFilter] = useState("");
 
   // ファイル選択時の処理
   const handleFileChange = useCallback(
@@ -40,16 +40,7 @@ const Timeline = () => {
           const result = event.target?.result;
           if (typeof result === "string") {
             const data = JSON.parse(result) as SprintData;
-            setSprint(data.metaData);
-            const chartData: ChartData = data.backlogs.flatMap((backlog) =>
-              backlog.subtasks.map((subtask) => [
-                backlog.name,
-                subtask.name,
-                new Date(subtask.start),
-                new Date(subtask.end),
-              ])
-            );
-            setData(chartData);
+            setSprint(data);
           }
         };
         reader.readAsText(file);
@@ -58,22 +49,47 @@ const Timeline = () => {
     []
   );
 
+  const chartData: ChartData = useMemo(() => {
+    if (!sprint) {
+      return [];
+    }
+    return sprint.backlogs.flatMap((backlog) => {
+      return backlog.subtasks
+        .filter((subtask) => subtask.pic.includes(filter))
+        .map((subtask) => [
+          backlog.name,
+          subtask.name,
+          new Date(subtask.start),
+          new Date(subtask.end),
+        ]);
+    });
+  }, [sprint, filter]);
+
   return (
     <div className="App">
+      <input
+        type="text"
+        value={filter}
+        onChange={(event) => setFilter(event.target.value)}
+        placeholder="Filter by PIC"
+      />
       <input type="file" onChange={handleFileChange} className="file-input" />
-      {sprint && (
+      {sprint && chartData.length > 0 && (
         <Chart
           width={"100%"}
           height={"100vh"}
           chartType="Timeline"
           loader={<div>Loading Chart</div>}
-          data={[["Backlog Name", "Subtask Name", "Start", "End"], ...data]}
+          data={[
+            ["Backlog Name", "Subtask Name", "Start", "End"],
+            ...chartData,
+          ]}
           options={{
             showRowNumber: true,
             hAxis: {
               format: "MM/dd HH:mm",
-              minValue: new Date(sprint?.beginDete ?? ""),
-              maxValue: new Date(sprint?.endDate ?? ""),
+              minValue: new Date(sprint?.metaData.beginDete ?? ""),
+              maxValue: new Date(sprint?.metaData.endDate ?? ""),
             },
             timeline: {
               groupByRowLabel: true,
