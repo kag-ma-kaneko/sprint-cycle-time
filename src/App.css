@@ -20,6 +20,10 @@
   padding: 10px;
 }
 
+.zoom-input {
+  margin: 10px;
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
