@@ -23,4 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 
-data-*.json
+data-sprint*.json
