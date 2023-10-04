@@ -9,7 +9,7 @@ type SprintData = {
 
 type SprintMetaData = {
   sprintNo: number;
-  beginDete: string;
+  beginDate: string;
   endDate: string;
 };
 
@@ -52,9 +52,10 @@ const Timeline = () => {
           const result = event.target?.result;
           if (typeof result === "string") {
             const data = JSON.parse(result) as SprintData;
+            console.log(data);
             setSprint(data);
             setZoomStart(
-              convertISOtoYYYYMMDD(new Date(data.metaData.beginDete.toString()))
+              convertISOtoYYYYMMDD(new Date(data.metaData.beginDate.toString()))
             );
             setZoomEnd(
               convertISOtoYYYYMMDD(new Date(data.metaData.endDate.toString()))
